@@ -1,4 +1,4 @@
-package app.bangkit.architecturecomponent.dispatcher
+package app.bangkit.architecturecomponent.utils
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

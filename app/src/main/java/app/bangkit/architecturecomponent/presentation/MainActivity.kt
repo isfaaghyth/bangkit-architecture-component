@@ -1,23 +1,14 @@
-package app.bangkit.architecturecomponent
+package app.bangkit.architecturecomponent.presentation
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import app.bangkit.architecturecomponent.data.AppDatabase
-import app.bangkit.architecturecomponent.data.repository.UserLocalRepository
 import app.bangkit.architecturecomponent.databinding.ActivityMainBinding
-import app.bangkit.architecturecomponent.viewmodel.MainViewModel
-import app.bangkit.architecturecomponent.viewmodel.factory.MainViewModelFactory
 
 class MainActivity : AppCompatActivity() {
 
     private var binding: ActivityMainBinding? = null
-
-    private val userDao by lazy {
-        AppDatabase.instance(applicationContext).userDao()
-    }
-
     private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,25 +16,21 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
-        val repository = UserLocalRepository(userDao)
-        val factory = MainViewModelFactory(repository)
-
+        // instance the viewModel
         viewModel = ViewModelProvider(
             this,
-            factory
+                MainViewModelFactory(applicationContext)
         ).get(MainViewModel::class.java)
 
-        viewModel.getAllUsers().observe(this, Observer {
-            binding?.txtNames?.text = ""
-            var users = ""
+        // observe the data of users
+        viewModel.getAllUsers().observe(this, Observer { userResponse ->
+            var user = ""
 
-            if (it != null) {
-                it.forEach {  user ->
-                    users += user.firstName + " " + user.lastName + "\n"
-                }
-
-                binding?.txtNames?.text = users
+            userResponse.forEach {
+                user += it.firstName + " " + it.lastName + "\n"
             }
+
+            binding?.txtNames?.text = user
         })
 
         binding?.btnInsert?.setOnClickListener {

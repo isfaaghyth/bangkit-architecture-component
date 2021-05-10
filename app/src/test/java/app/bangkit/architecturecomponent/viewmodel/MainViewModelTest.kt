@@ -2,8 +2,9 @@ package app.bangkit.architecturecomponent.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import app.bangkit.architecturecomponent.dispatcher.TestDispatcher
+import app.bangkit.architecturecomponent.utils.TestDispatcher
 import app.bangkit.architecturecomponent.model.GetVolumeModel
+import app.bangkit.architecturecomponent.presentation.MainViewModel
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Before

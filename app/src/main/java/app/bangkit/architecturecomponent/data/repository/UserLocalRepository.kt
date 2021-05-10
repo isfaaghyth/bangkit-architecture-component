@@ -3,20 +3,21 @@ package app.bangkit.architecturecomponent.data.repository
 import androidx.lifecycle.LiveData
 import app.bangkit.architecturecomponent.data.UserDao
 import app.bangkit.architecturecomponent.data.entity.UserEntity
+import app.bangkit.architecturecomponent.domain.IUserLocalRepository
 
 class UserLocalRepository constructor(
     private val user: UserDao
-) {
+) : IUserLocalRepository {
 
-    fun getAll(): LiveData<List<UserEntity>> {
+    override fun getAll(): LiveData<List<UserEntity>> {
         return user.getAll()
     }
 
-    fun insert(userEntity: UserEntity) {
+    override fun insert(userEntity: UserEntity) {
         user.insert(userEntity)
     }
 
-    fun delete(userEntity: UserEntity) {
+    override fun delete(userEntity: UserEntity) {
         user.delete(userEntity)
     }
 

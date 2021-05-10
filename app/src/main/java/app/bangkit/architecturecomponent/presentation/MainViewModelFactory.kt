@@ -1,11 +1,10 @@
-package app.bangkit.architecturecomponent.viewmodel.factory
+package app.bangkit.architecturecomponent.presentation
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import app.bangkit.architecturecomponent.data.repository.UserLocalRepository
-import app.bangkit.architecturecomponent.dispatcher.AppDispatcher
-import app.bangkit.architecturecomponent.viewmodel.MainViewModel
-import java.lang.IllegalArgumentException
+import app.bangkit.architecturecomponent.utils.AppDispatcher
+import app.bangkit.architecturecomponent.utils.Injection
 
 /*
 * Because our viewModel have parameters/arguments,
@@ -14,14 +13,15 @@ import java.lang.IllegalArgumentException
 * */
 
 class MainViewModelFactory constructor(
-    private val userLocalRepository: UserLocalRepository
+    private val context: Context
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
             return MainViewModel(
-                userLocalRepository,
-                AppDispatcher()
+                    Injection.buildGetUserLocalUseCase(context),
+                    Injection.buildInsertUserLocalUseCase(context),
+                    AppDispatcher()
             ) as T
         }
 

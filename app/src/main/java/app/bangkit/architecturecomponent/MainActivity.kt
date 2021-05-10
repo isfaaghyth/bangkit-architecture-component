@@ -4,12 +4,19 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import app.bangkit.architecturecomponent.data.AppDatabase
+import app.bangkit.architecturecomponent.data.repository.UserLocalRepository
 import app.bangkit.architecturecomponent.databinding.ActivityMainBinding
 import app.bangkit.architecturecomponent.viewmodel.MainViewModel
+import app.bangkit.architecturecomponent.viewmodel.factory.MainViewModelFactory
 
 class MainActivity : AppCompatActivity() {
 
     private var binding: ActivityMainBinding? = null
+
+    private val userDao by lazy {
+        AppDatabase.instance(applicationContext).userDao()
+    }
 
     private lateinit var viewModel: MainViewModel
 
@@ -18,19 +25,32 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
-        viewModel = ViewModelProvider(this)
-                .get(MainViewModel::class.java)
+        val repository = UserLocalRepository(userDao)
+        val factory = MainViewModelFactory(repository)
 
-        viewModel.result.observe(this, Observer { result ->
-            binding?.txtResult?.text = result.toString()
+        viewModel = ViewModelProvider(
+            this,
+            factory
+        ).get(MainViewModel::class.java)
+
+        viewModel.getAllUsers().observe(this, Observer {
+            binding?.txtNames?.text = ""
+            var users = ""
+
+            if (it != null) {
+                it.forEach {  user ->
+                    users += user.firstName + " " + user.lastName + "\n"
+                }
+
+                binding?.txtNames?.text = users
+            }
         })
 
-        binding?.btnCalculate?.setOnClickListener {
-            val width = binding?.edtLebar?.text.toString().toDouble()
-            val height = binding?.edtTinggi?.text.toString().toDouble()
-            val length = binding?.edtPanjang?.text.toString().toDouble()
+        binding?.btnInsert?.setOnClickListener {
+            val firstName = binding?.edtFirstName?.text.toString()
+            val lastName = binding?.edtLastName?.text.toString()
 
-            viewModel.calculate(width, height, length)
+            viewModel.insert(firstName, lastName)
         }
     }
 
